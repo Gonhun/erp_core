@@ -4,20 +4,18 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration {
+return new class extends Migration
+{
     /**
      * Run the migrations.
      */
     public function up(): void
     {
-        Schema::create('taxes', function (Blueprint $table) {
+        Schema::create('uom_categories', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->string('tax_name', 255)->index();
-            $table->integer('tax_computation')->index()->nullable();
-            $table->string('tax_type', 255)->index()->nullable();
-            $table->string('tax_scope', 12)->index()->nullable();
-            $table->decimal('tax_amount', 18, 2);
-            $table->boolean('is_ppn')->default(false);
+            $table->string('category_name', 255)->unique()->index();
+            $table->string('base_uom_name', 255);
+            $table->string('base_uom', 50);
             $table->boolean('is_active')->default(true);
             $table->timestamps();
             $table->softDeletes();
@@ -29,6 +27,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('taxes');
+        Schema::dropIfExists('uom_categories');
     }
 };

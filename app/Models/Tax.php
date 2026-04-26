@@ -26,4 +26,19 @@ class Tax extends Model
         'tax_amount' => 'double',
         'tax_computation' => 'integer',
     ];
+
+    public function setups()
+    {
+        return $this->hasMany(TaxSetup::class);
+    }
+
+    public function invoiceDefinitions()
+    {
+        return $this->hasMany(TaxInvoiceDefinition::class);
+    }
+
+    public function refundDefinitions()
+    {
+        return $this->hasMany(TaxRefundDefinition::class);
+    }
 }

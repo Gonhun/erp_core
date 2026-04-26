@@ -79,6 +79,7 @@
                         <th class="text-center">PPN</th>
                         <th class="text-center">Active</th>
                         <th class="text-end" style="width: 150px;"></th>
+                        <th class="text-end" style="width: 150px;"></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -92,8 +93,11 @@
                         <td>
                             <select wire:model="new_tax_computation" class="inline-select">
                                 <option value="">Select...</option>
-                                <option value="1">Percentage</option>
-                                <option value="2">Fixed</option>
+                                <option value="1">Group Of Taxes</option>
+                                <option value="2">Percentage</option>
+                                <option value="3">Fixed</option>
+                                <option value="4">Percentage Price Included</option>
+                                <option value="5">Percentage Price Excluded</option>
                             </select>
                         </td>
                         <td>
@@ -101,6 +105,7 @@
                                 <option value="">Select...</option>
                                 <option value="Sales">Sales</option>
                                 <option value="Purchases">Purchases</option>
+                                <option value="None">None</option>
                             </select>
                         </td>
                         <td>
@@ -123,6 +128,7 @@
                             <span wire:click="saveNew" wire:confirm="Are you sure you want to create this tax?" class="action-text me-2">SAVE</span>
                             <span wire:click="cancelNew" class="text-muted" style="cursor:pointer">DISCARD</span>
                         </td>
+                        <td></td>
                     </tr>
                     @endif
 
@@ -136,8 +142,11 @@
                                 <td>
                                     <select wire:model="edit_tax_computation" class="inline-select">
                                         <option value="">Select...</option>
-                                        <option value="1">Percentage</option>
-                                        <option value="2">Fixed</option>
+                                        <option value="1">Group Of Taxes</option>
+                                        <option value="2">Percentage</option>
+                                        <option value="3">Fixed</option>
+                                        <option value="4">Percentage Price Included</option>
+                                        <option value="5">Percentage Price Excluded</option>
                                     </select>
                                 </td>
                                 <td>
@@ -145,6 +154,7 @@
                                         <option value="">Select...</option>
                                         <option value="Sales">Sales</option>
                                         <option value="Purchases">Purchases</option>
+                                        <option value="None">None</option>
                                     </select>
                                 </td>
                                 <td><input type="text" wire:model="edit_tax_scope" class="inline-input"></td>
@@ -163,6 +173,7 @@
                                     <span wire:click="saveEdit" wire:confirm="Are you sure you want to save these changes?" class="action-text me-2">SAVE</span>
                                     <span wire:click="cancelEdit" class="text-muted" style="cursor:pointer">DISCARD</span>
                                 </td>
+                                <td></td>
                             </tr>
                         @else
                             <tr wire:key="view-{{ $tax->id }}-{{ $iteration }}">
@@ -170,7 +181,14 @@
                                 <!-- Normal Row -->
                                 <td wire:click="edit('{{ $tax->id }}')" style="cursor:pointer">{{ $tax->tax_name }}</td>
                                 <td wire:click="edit('{{ $tax->id }}')" style="cursor:pointer">
-                                    {{ $tax->tax_computation == 1 ? 'Percentage' : ($tax->tax_computation == 2 ? 'Fixed' : '') }}
+                                    @php
+                                        $comp = $tax->tax_computation;
+                                        if ($comp == 1) echo 'Group Of Taxes';
+                                        elseif ($comp == 2) echo 'Percentage';
+                                        elseif ($comp == 3) echo 'Fixed';
+                                        elseif ($comp == 4) echo 'Percentage Price Included';
+                                        elseif ($comp == 5) echo 'Percentage Price Excluded';
+                                    @endphp
                                 </td>
                                 <td wire:click="edit('{{ $tax->id }}')" style="cursor:pointer">{{ $tax->tax_type }}</td>
                                 <td wire:click="edit('{{ $tax->id }}')" style="cursor:pointer">{{ $tax->tax_scope }}</td>
@@ -186,6 +204,9 @@
                                     </div>
                                 </td>
                                 <td class="text-end">
+                                    <a href="/finance/taxes/{{ $tax->id }}/setup" class="action-text me-3">SETUP</a>
+                                </td>
+                                <td class="text-end">
                                     <span wire:click="edit('{{ $tax->id }}')" class="action-text me-2">EDIT</span>
                                     <span wire:click="delete('{{ $tax->id }}')" wire:confirm="Are you sure you want to delete this tax?" class="text-danger" style="cursor:pointer"><i class="mdi mdi-delete"></i></span>
                                 </td>
@@ -195,7 +216,7 @@
 
                     @if(count($taxes) === 0 && !$isCreating)
                         <tr>
-                            <td colspan="9" class="text-center py-4 text-muted">
+                            <td colspan="10" class="text-center py-4 text-muted">
                                 No taxes found.
                             </td>
                         </tr>

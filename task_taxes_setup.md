@@ -1,0 +1,4 @@
+- [x] Write TaxSetupManager.php component with CRUD logic for 3 tables
+- [x] Write tax-setup-manager.blade.php with tabs and inline grid UI
+- [x] Update routes/web.php
+- [x] Verify functionality

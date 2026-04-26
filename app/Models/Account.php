@@ -38,4 +38,14 @@ class Account extends Model
     {
         return $this->hasMany(Account::class, 'parent_id');
     }
+
+    public function taxInvoiceDefinitions()
+    {
+        return $this->hasMany(TaxInvoiceDefinition::class);
+    }
+
+    public function taxRefundDefinitions()
+    {
+        return $this->hasMany(TaxRefundDefinition::class);
+    }
 }
