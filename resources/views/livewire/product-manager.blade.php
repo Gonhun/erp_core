@@ -41,6 +41,21 @@
             border-color: #008784;
             box-shadow: 0 0 0 0.25rem rgba(0, 135, 132, 0.25);
         }
+        .nav-tabs .nav-link {
+            color: #495057;
+            border: none;
+            border-bottom: 3px solid transparent;
+            font-weight: 600;
+            padding: 10px 20px;
+        }
+        .nav-tabs .nav-link.active {
+            color: #008784;
+            background-color: transparent;
+            border-bottom: 3px solid #008784;
+        }
+        .nav-tabs .nav-link:hover:not(.active) {
+            border-bottom: 3px solid #dee2e6;
+        }
     </style>
     
     <div class="container-fluid py-3 bg-white">
@@ -57,111 +72,177 @@
                 <div class="card-header bg-white border-bottom py-3">
                     <h5 class="mb-0">{{ $isCreating ? 'New Product' : 'Edit Product' }}</h5>
                 </div>
-                <div class="card-body p-4">
-                    <div class="row g-4">
-                        <div class="col-md-3">
-                            <label class="form-label text-muted small fw-bold">Product Code</label>
-                            <input type="text" class="form-control bg-light" wire:model="{{ $isCreating ? 'new_product_code' : 'edit_product_code' }}" {{ $isCreating ? 'readonly' : '' }}>
-                            @error($isCreating ? 'new_product_code' : 'edit_product_code') <span class="text-danger small">{{ $message }}</span> @enderror
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label text-muted small fw-bold">Product Name</label>
-                            <input type="text" class="form-control" wire:model="{{ $isCreating ? 'new_product_name' : 'edit_product_name' }}">
-                            @error($isCreating ? 'new_product_name' : 'edit_product_name') <span class="text-danger small">{{ $message }}</span> @enderror
-                        </div>
-                        <div class="col-md-3">
-                            <label class="form-label text-muted small fw-bold">Part Number</label>
-                            <input type="text" class="form-control" wire:model="{{ $isCreating ? 'new_part_number' : 'edit_part_number' }}">
-                        </div>
-
-                        <div class="col-md-4">
-                            <label class="form-label text-muted small fw-bold">Product Type</label>
-                            <select class="form-select" wire:model="{{ $isCreating ? 'new_product_type_id' : 'edit_product_type_id' }}">
-                                <option value=""></option>
-                                @foreach($types as $type)
-                                    <option value="{{ $type->id }}">{{ $type->product_type_name }}</option>
-                                @endforeach
-                            </select>
-                            @error($isCreating ? 'new_product_type_id' : 'edit_product_type_id') <span class="text-danger small">{{ $message }}</span> @enderror
-                        </div>
-
-                        <div class="col-md-4">
-                            <label class="form-label text-muted small fw-bold">Invoicing Policy</label>
-                            <select class="form-select" wire:model="{{ $isCreating ? 'new_invoicing_policy' : 'edit_invoicing_policy' }}">
-                                <option value="Ordered">Ordered quantities</option>
-                                <option value="Delivered">Delivered quantities</option>
-                            </select>
-                        </div>
-
-                        <div class="col-md-4">
-                            <label class="form-label text-muted small fw-bold">Brand</label>
-                            <select class="form-select" wire:model="{{ $isCreating ? 'new_brand_id' : 'edit_brand_id' }}">
-                                <option value=""></option>
-                                @foreach($brands as $brand)
-                                    <option value="{{ $brand->id }}">{{ $brand->brand_name }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-
-                        <div class="col-md-4">
-                            <label class="form-label text-muted small fw-bold">Unit of Measure</label>
-                            <select class="form-select" wire:model="{{ $isCreating ? 'new_uom_id' : 'edit_uom_id' }}">
-                                <option value=""></option>
-                                @foreach($uoms as $uom)
-                                    <option value="{{ $uom->id }}">{{ $uom->uom_name }}</option>
-                                @endforeach
-                            </select>
-                            @error($isCreating ? 'new_uom_id' : 'edit_uom_id') <span class="text-danger small">{{ $message }}</span> @enderror
-                        </div>
-
-                        <div class="col-md-4">
-                            <label class="form-label text-muted small fw-bold">Purchase Unit of Measure</label>
-                            <select class="form-select" wire:model="{{ $isCreating ? 'new_purchase_uom_id' : 'edit_purchase_uom_id' }}">
-                                <option value=""></option>
-                                @foreach($uoms as $uom)
-                                    <option value="{{ $uom->id }}">{{ $uom->uom_name }}</option>
-                                @endforeach
-                            </select>
-                            @error($isCreating ? 'new_purchase_uom_id' : 'edit_purchase_uom_id') <span class="text-danger small">{{ $message }}</span> @enderror
-                        </div>
-
-                        <div class="col-md-4"></div>
-
-                        <div class="col-md-4">
-                            <label class="form-label text-muted small fw-bold">Item Category</label>
-                            <select class="form-select" wire:model.live="{{ $isCreating ? 'new_item_category_id' : 'edit_item_category_id' }}">
-                                <option value=""></option>
-                                @foreach($categories as $cat)
-                                    <option value="{{ $cat->id }}">{{ $cat->category_name }}</option>
-                                @endforeach
-                            </select>
-                            @error($isCreating ? 'new_item_category_id' : 'edit_item_category_id') <span class="text-danger small">{{ $message }}</span> @enderror
-                        </div>
-
-                        <div class="col-md-4">
-                            <label class="form-label text-muted small fw-bold">Sub Item Category</label>
-                            <select class="form-select" wire:model="{{ $isCreating ? 'new_sub_item_id' : 'edit_sub_item_id' }}">
-                                <option value=""></option>
-                                @foreach(($isCreating ? $newSubCategories : $editSubCategories) as $sub)
-                                    <option value="{{ $sub->id }}">{{ $sub->sub_category_name }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-
-                        <div class="col-12">
-                            <label class="form-label text-muted small fw-bold">Internal Notes</label>
-                            <textarea class="form-control" rows="3" wire:model="{{ $isCreating ? 'new_product_notes' : 'edit_product_notes' }}"></textarea>
-                        </div>
+                <div class="card-body p-0">
+                    <!-- Custom Tabs -->
+                    <div class="d-flex border-bottom px-4" style="background-color: #f8f9fa;">
+                        <button type="button" 
+                            wire:click="setTab('general')" 
+                            class="py-3 px-4 fw-bold border-0 bg-transparent {{ $activeTab == 'general' ? 'text-primary border-bottom border-primary border-3' : 'text-muted' }}"
+                            style="cursor: pointer; {{ $activeTab == 'general' ? 'border-bottom: 3px solid #008784 !important; color: #008784 !important;' : '' }}">
+                            General Information
+                        </button>
+                        <button type="button" 
+                            wire:click="setTab('substitutes')" 
+                            class="py-3 px-4 fw-bold border-0 bg-transparent {{ $activeTab == 'substitutes' ? 'text-primary border-bottom border-primary border-3' : 'text-muted' }}"
+                            style="cursor: pointer; {{ $activeTab == 'substitutes' ? 'border-bottom: 3px solid #008784 !important; color: #008784 !important;' : '' }}">
+                            Substitutes
+                        </button>
                     </div>
 
-                    <div class="mt-4 pt-3 border-top d-flex gap-2">
-                        @if($isCreating)
-                            <button wire:click="saveNew" wire:confirm="Are you sure you want to create this product?" class="btn btn-new">SAVE</button>
-                            <button wire:click="cancelNew" class="btn btn-light border">DISCARD</button>
-                        @else
-                            <button wire:click="saveEdit" wire:confirm="Are you sure you want to save these changes?" class="btn btn-new">SAVE CHANGES</button>
-                            <button wire:click="cancelEdit" class="btn btn-light border">DISCARD</button>
+                    <div class="p-4">
+                        @if($activeTab == 'general')
+                            <div class="row g-4">
+                                <div class="col-md-3">
+                                    <label class="form-label text-muted small fw-bold">Product Code</label>
+                                    <input type="text" class="form-control bg-light" wire:model="product_code" readonly>
+                                    @error('product_code') <span class="text-danger small">{{ $message }}</span> @enderror
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label text-muted small fw-bold">Product Name</label>
+                                    <input type="text" class="form-control" wire:model="product_name">
+                                    @error('product_name') <span class="text-danger small">{{ $message }}</span> @enderror
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label text-muted small fw-bold">Part Number</label>
+                                    <input type="text" class="form-control" wire:model="part_number">
+                                </div>
+
+                                <div class="col-md-4">
+                                    <label class="form-label text-muted small fw-bold">Product Type</label>
+                                    <select class="form-select" wire:model="product_type_id">
+                                        <option value=""></option>
+                                        @foreach($types as $type)
+                                            <option value="{{ $type->id }}">{{ $type->product_type_name }}</option>
+                                        @endforeach
+                                    </select>
+                                    @error('product_type_id') <span class="text-danger small">{{ $message }}</span> @enderror
+                                </div>
+
+                                <div class="col-md-4">
+                                    <label class="form-label text-muted small fw-bold">Invoicing Policy</label>
+                                    <select class="form-select" wire:model="invoicing_policy">
+                                        <option value="Ordered">Ordered quantities</option>
+                                        <option value="Delivered">Delivered quantities</option>
+                                    </select>
+                                </div>
+
+                                <div class="col-md-4">
+                                    <label class="form-label text-muted small fw-bold">Brand</label>
+                                    <select class="form-select" wire:model="brand_id">
+                                        <option value=""></option>
+                                        @foreach($brands as $brand)
+                                            <option value="{{ $brand->id }}">{{ $brand->brand_name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+
+                                <div class="col-md-4">
+                                    <label class="form-label text-muted small fw-bold">Unit of Measure</label>
+                                    <select class="form-select" wire:model="uom_id">
+                                        <option value=""></option>
+                                        @foreach($uoms as $uom)
+                                            <option value="{{ $uom->id }}">{{ $uom->uom_name }}</option>
+                                        @endforeach
+                                    </select>
+                                    @error('uom_id') <span class="text-danger small">{{ $message }}</span> @enderror
+                                </div>
+
+                                <div class="col-md-4">
+                                    <label class="form-label text-muted small fw-bold">Purchase Unit of Measure</label>
+                                    <select class="form-select" wire:model="purchase_uom_id">
+                                        <option value=""></option>
+                                        @foreach($uoms as $uom)
+                                            <option value="{{ $uom->id }}">{{ $uom->uom_name }}</option>
+                                        @endforeach
+                                    </select>
+                                    @error('purchase_uom_id') <span class="text-danger small">{{ $message }}</span> @enderror
+                                </div>
+
+                                <div class="col-md-4"></div>
+
+                                <div class="col-md-4">
+                                    <label class="form-label text-muted small fw-bold">Item Category</label>
+                                    <select class="form-select" wire:model.live="item_category_id">
+                                        <option value=""></option>
+                                        @foreach($categories as $cat)
+                                            <option value="{{ $cat->id }}">{{ $cat->category_name }}</option>
+                                        @endforeach
+                                    </select>
+                                    @error('item_category_id') <span class="text-danger small">{{ $message }}</span> @enderror
+                                </div>
+
+                                <div class="col-md-4">
+                                    <label class="form-label text-muted small fw-bold">Sub Item Category</label>
+                                    <select class="form-select" wire:model="sub_item_id">
+                                        <option value=""></option>
+                                        @foreach($subCategories as $sub)
+                                            <option value="{{ $sub->id }}">{{ $sub->sub_category_name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+
+                                <div class="col-12">
+                                    <label class="form-label text-muted small fw-bold">Internal Notes</label>
+                                    <textarea class="form-control" rows="3" wire:model="product_notes"></textarea>
+                                </div>
+
+                                <div class="col-12">
+                                    <div class="form-check form-switch mt-2">
+                                        <input class="form-check-input" type="checkbox" wire:model="is_active" id="productActive">
+                                        <label class="form-check-label fw-bold" for="productActive">Active</label>
+                                    </div>
+                                </div>
+                            </div>
+                        @elseif($activeTab == 'substitutes')
+                            <div class="table-responsive">
+                                <table class="table table-bordered odoo-table shadow-none">
+                                    <thead class="bg-light">
+                                        <tr>
+                                            <th>Substitute Product</th>
+                                            <th style="width: 120px;">Priority</th>
+                                            <th style="width: 100px;" class="text-center">Active</th>
+                                            <th style="width: 50px;"></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach($substitutes as $index => $sub)
+                                            <tr wire:key="sub-row-{{ $index }}">
+                                                <td>
+                                                    <select class="form-select border-0 shadow-none" wire:model="substitutes.{{ $index }}.substitute_product_id">
+                                                        <option value="">Select Product...</option>
+                                                        @foreach($allProducts as $p)
+                                                            <option value="{{ $p->id }}">{{ $p->product_code }} - {{ $p->product_name }}</option>
+                                                        @endforeach
+                                                    </select>
+                                                    @error("substitutes.{$index}.substitute_product_id") <span class="text-danger small">Required</span> @enderror
+                                                </td>
+                                                <td>
+                                                    <input type="number" class="form-control border-0 shadow-none" wire:model="substitutes.{{ $index }}.priority">
+                                                </td>
+                                                <td class="text-center">
+                                                    <div class="form-check form-switch d-inline-block mt-2">
+                                                        <input class="form-check-input" type="checkbox" wire:model="substitutes.{{ $index }}.is_active">
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <button class="btn btn-link text-danger p-0 mt-2" wire:click="removeSubstituteRow({{ $index }})">
+                                                        <i class="mdi mdi-delete-outline fs-5"></i>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                                <button class="btn btn-link action-text text-decoration-none p-0" wire:click="addSubstituteRow">
+                                    <i class="mdi mdi-plus-circle-outline"></i> Add a line
+                                </button>
+                            </div>
                         @endif
+
+                        <div class="mt-4 pt-3 border-top d-flex gap-2">
+                            <button wire:click="save" wire:confirm="Are you sure you want to save this product?" class="btn btn-new">SAVE</button>
+                            <button wire:click="cancel" class="btn btn-light border">DISCARD</button>
+                        </div>
                     </div>
                 </div>
             </div>

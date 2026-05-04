@@ -5,6 +5,7 @@ namespace App\Livewire;
 use Livewire\Component;
 use App\Models\ItemCategory;
 use App\Models\SubItemCategory;
+use App\Models\Account;
 
 class ItemCategoryManager extends Component
 {
@@ -14,26 +15,37 @@ class ItemCategoryManager extends Component
     public $catIsCreating = false;
     public $catEditingId = null;
     public $new_cat_name = '';
+    public $new_cat_income_account = '';
+    public $new_cat_expense_account = '';
     public $new_cat_is_active = true;
     public $edit_cat_name = '';
+    public $edit_cat_income_account = '';
+    public $edit_cat_expense_account = '';
     public $edit_cat_is_active = true;
 
     // Subcategory states
     public $subIsCreating = null; // Store parent category ID
     public $subEditingId = null;
     public $new_sub_name = '';
+    public $new_sub_income_account = '';
+    public $new_sub_expense_account = '';
     public $new_sub_is_active = true;
     public $edit_sub_name = '';
+    public $edit_sub_income_account = '';
+    public $edit_sub_expense_account = '';
     public $edit_sub_is_active = true;
 
     public function render()
     {
         $categories = ItemCategory::with(['subCategories' => function($q) {
             $q->orderBy('sub_category_name');
-        }])->orderBy('category_name')->get();
+        }, 'incomeAccount', 'expenseAccount'])->orderBy('category_name')->get();
+
+        $accounts = Account::where('is_active', true)->orderBy('account_code')->get();
 
         return view('livewire.item-category-manager', [
             'categories' => $categories,
+            'accounts' => $accounts,
         ])->layout('layouts.app');
     }
 
@@ -45,6 +57,8 @@ class ItemCategoryManager extends Component
         $this->subIsCreating = null;
         $this->subEditingId = null;
         $this->new_cat_name = '';
+        $this->new_cat_income_account = '';
+        $this->new_cat_expense_account = '';
         $this->new_cat_is_active = true;
         $this->iteration++;
     }
@@ -63,6 +77,8 @@ class ItemCategoryManager extends Component
 
         ItemCategory::create([
             'category_name' => $this->new_cat_name,
+            'income_account' => $this->new_cat_income_account ?: null,
+            'expense_account' => $this->new_cat_expense_account ?: null,
             'is_active' => (bool)$this->new_cat_is_active,
         ]);
 
@@ -75,6 +91,8 @@ class ItemCategoryManager extends Component
         $cat = ItemCategory::findOrFail($id);
         $this->catEditingId = $id;
         $this->edit_cat_name = $cat->category_name;
+        $this->edit_cat_income_account = $cat->income_account;
+        $this->edit_cat_expense_account = $cat->expense_account;
         $this->edit_cat_is_active = $cat->is_active;
 
         $this->catIsCreating = false;
@@ -98,6 +116,8 @@ class ItemCategoryManager extends Component
         $cat = ItemCategory::findOrFail($this->catEditingId);
         $cat->update([
             'category_name' => $this->edit_cat_name,
+            'income_account' => $this->edit_cat_income_account ?: null,
+            'expense_account' => $this->edit_cat_expense_account ?: null,
             'is_active' => (bool)$this->edit_cat_is_active,
         ]);
 
@@ -119,6 +139,8 @@ class ItemCategoryManager extends Component
         $this->catIsCreating = false;
         $this->catEditingId = null;
         $this->new_sub_name = '';
+        $this->new_sub_income_account = '';
+        $this->new_sub_expense_account = '';
         $this->new_sub_is_active = true;
         $this->iteration++;
     }
@@ -138,6 +160,8 @@ class ItemCategoryManager extends Component
         SubItemCategory::create([
             'sub_category_name' => $this->new_sub_name,
             'item_category_id' => $this->subIsCreating,
+            'income_account' => $this->new_sub_income_account ?: null,
+            'expense_account' => $this->new_sub_expense_account ?: null,
             'is_active' => (bool)$this->new_sub_is_active,
         ]);
 
@@ -150,6 +174,8 @@ class ItemCategoryManager extends Component
         $sub = SubItemCategory::findOrFail($id);
         $this->subEditingId = $id;
         $this->edit_sub_name = $sub->sub_category_name;
+        $this->edit_sub_income_account = $sub->income_account;
+        $this->edit_sub_expense_account = $sub->expense_account;
         $this->edit_sub_is_active = $sub->is_active;
 
         $this->subIsCreating = null;
@@ -173,6 +199,8 @@ class ItemCategoryManager extends Component
         $sub = SubItemCategory::findOrFail($this->subEditingId);
         $sub->update([
             'sub_category_name' => $this->edit_sub_name,
+            'income_account' => $this->edit_sub_income_account ?: null,
+            'expense_account' => $this->edit_sub_expense_account ?: null,
             'is_active' => (bool)$this->edit_sub_is_active,
         ]);
 

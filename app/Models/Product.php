@@ -22,6 +22,11 @@ class Product extends Model
         'sub_item_id',
         'part_number',
         'product_notes',
+        'is_active',
+    ];
+
+    protected $casts = [
+        'is_active' => 'boolean',
     ];
 
     public function productType() { return $this->belongsTo(ProductType::class, 'product_type_id'); }
@@ -30,4 +35,5 @@ class Product extends Model
     public function purchaseUom() { return $this->belongsTo(Uom::class, 'purchase_uom_id'); }
     public function itemCategory() { return $this->belongsTo(ItemCategory::class, 'item_category_id'); }
     public function subItem() { return $this->belongsTo(SubItemCategory::class, 'sub_item_id'); }
+    public function substitutes() { return $this->hasMany(ProductSubstitute::class, 'product_id'); }
 }

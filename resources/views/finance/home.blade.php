@@ -30,5 +30,10 @@
             <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900">Taxes</h5>
             <p class="font-normal text-gray-700">Manage your tax rules, computations, and scopes.</p>
         </a>
+
+        <a href="{{ route('finance.customers') }}" class="block p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 transition duration-150 ease-in-out">
+            <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900">Customers</h5>
+            <p class="font-normal text-gray-700">Manage customer profiles, accounting settings, and tax identities.</p>
+        </a>
     </div>
 @endsection

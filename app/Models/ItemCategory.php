@@ -12,6 +12,8 @@ class ItemCategory extends Model
 
     protected $fillable = [
         'category_name',
+        'income_account',
+        'expense_account',
         'is_active',
     ];
 
@@ -22,5 +24,14 @@ class ItemCategory extends Model
     public function subCategories()
     {
         return $this->hasMany(SubItemCategory::class, 'item_category_id');
+    }
+    public function incomeAccount()
+    {
+        return $this->belongsTo(Account::class, 'income_account');
+    }
+
+    public function expenseAccount()
+    {
+        return $this->belongsTo(Account::class, 'expense_account');
     }
 }
