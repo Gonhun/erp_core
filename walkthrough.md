@@ -1,16 +1,26 @@
-# Tax Setup Manager Module Walkthrough
+# Walkthrough: Purchasing Flow
 
-I have fully implemented the **Tax Setup Manager**, which provides a streamlined and unified interface to manage three distinct backend models simultaneously.
+## 1. Creating a Quotation
+You will navigate to **Purchasing > Purchase Orders** and click **NEW**. 
+- **Vendor Selection**: Select a Vendor. The system will automatically check if this vendor is marked for **PPN** and set the default tax for your items.
+- **Header Details**: Set the Order Date, Deadline, and Delivery Warehouse.
+- **Item List**: Add products. For each item:
+    - Specify **Quantity** and **Unit Price**.
+    - Apply a **Discount %** if applicable.
+    - Select specific **Taxes** (defaults to PPN if the vendor is eligible).
+- **Auto-Calculation**: The system calculates the row subtotal (Price * Qty - Discount) and sums up all untaxed amounts and taxes at the bottom.
+- **Initial Status**: Quotation (Draft).
 
-## Highlights
-1. **Dynamic Tabbed Interface**: 
-   - A perfectly integrated Bootstrap nav-tab design allows you to seamlessly switch between the **Definition Input** and **Advanced Setup Options** contexts without reloading the page.
-   
-2. **Tri-State Independent CRUD**:
-   - Built to handle three separate tables (`taxes_invoice_definition`, `taxes_refund_definition`, `taxes_setup`), each table inside the manager operates entirely independently. They maintain their own `$iteration` trackers, so opening an "Edit" row on the Refund Definition grid won't accidentally collapse your "Create" row on the Invoice Definition grid.
+## 2. Transitioning to RFQ
+Once the items are correct, you click **"Confirm RFQ"**.
+- This changes the status to **RFQ SENT**.
+- The record remains editable in case the vendor provides different pricing.
 
-3. **Select2 Alpine.js Magic**:
-   - The *Account* selection for the Definitions grids uses the robust `Select2` integration (via `@entangle` and `x-data`). The Select2 dropdowns gracefully unmount and reset thanks to the `$iteration` property whenever you click **Discard** or **Save**.
+## 3. Confirming as Purchase Order (PO)
+Once the vendor confirms availability and price:
+- Click **"Confirm Order"**.
+- The status changes to **PURCHASE ORDER**.
+- This locks the order and signals the warehouse to expect delivery.
 
-## What's Next
-You can now navigate back to your main **Taxes** grid, click the **SETUP** button on any tax row, and you will be directed to this powerful new manager page specific to that tax ID!
+## 4. Dashboard Integration
+The **Purchasing Dashboard** provides quick access to your Vendors and active Purchase Orders, showing real-time totals and statuses.

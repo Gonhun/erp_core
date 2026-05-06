@@ -6,16 +6,18 @@
         .odoo-table th {
             color: #495057;
             font-weight: 600;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             border-top: none;
             border-bottom: 2px solid #dee2e6;
-            padding: 12px 16px;
+            padding: 10px 16px;
+            text-transform: uppercase;
         }
         .odoo-table td {
             vertical-align: middle;
             color: #212529;
             padding: 8px 16px;
             border-bottom: 1px solid #e9ecef;
+            font-size: 0.95rem;
         }
         .btn-new {
             background-color: #008784;
@@ -37,15 +39,15 @@
         .action-text:hover {
             color: #006e6b;
         }
-        .inline-input, .inline-select {
-            border: 1px solid #008784;
-            border-radius: 2px;
-            padding: 4px 8px;
-            width: 100%;
-            outline: none;
-        }
-        .form-switch .form-check-input {
-            cursor: pointer;
+        .category-header {
+            background-color: #f8f9fa;
+            border-left: 4px solid #008784;
+            padding: 10px 20px;
+            margin-top: 2rem;
+            margin-bottom: 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
     </style>
     
@@ -54,129 +56,127 @@
             <a href="{{ route('inventory.home') }}" class="text-muted text-decoration-none">
                 <i class="mdi mdi-arrow-left"></i> Back to Inventory
             </a>
-            <h2 class="mt-2">Units of Measure (UoM)</h2>
+            <h2 class="mt-2">Units of Measure</h2>
         </div>
 
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            <div>
-                <button wire:click="createNew" class="btn btn-new border-0 shadow-none me-2">NEW</button>
-            </div>
-            <div class="text-muted small d-flex align-items-center">
-                <span class="me-3"><i class="mdi mdi-filter-variant"></i> Filters</span>
-                <span class="me-3"><i class="mdi mdi-format-list-bulleted-type"></i> Group By</span>
-                <span><i class="mdi mdi-star"></i> Favorites</span>
-            </div>
-            <div class="text-muted small">
-                1-{{ count($uoms) }} / {{ count($uoms) }}
-                <i class="mdi mdi-chevron-left ms-2 fs-5"></i>
-                <i class="mdi mdi-chevron-right fs-5"></i>
-            </div>
-        </div>
-
-        <div class="table-responsive">
-            <table class="table table-hover odoo-table mb-0">
-                <thead>
-                    <tr>
-                        <th style="width: 40px;"><input type="checkbox" class="form-check-input"></th>
-                        <th>UoM Name</th>
-                        <th>Category</th>
-                        <th>Type</th>
-                        <th>Ratio</th>
-                        <th class="text-center">Active</th>
-                        <th class="text-end" style="width: 150px;"></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @if($isCreating)
-                    <tr class="table-info" wire:key="create-row-{{ $iteration }}">
-                        <td></td>
-                        <td><input type="text" wire:model="new_uom_name" class="inline-input"></td>
-                        <td>
-                            <select wire:model="new_uom_category_id" class="inline-select">
-                                <option value=""></option>
+        @if($isCreating || $editingId)
+            <!-- Form View -->
+            <div class="card mb-4 border-0 shadow-sm" style="border: 1px solid #dee2e6 !important;" wire:key="form-card-{{ $iteration }}">
+                <div class="card-header bg-white border-bottom py-3">
+                    <h5 class="mb-0">{{ $isCreating ? 'New UoM' : 'Edit UoM' }}</h5>
+                </div>
+                <div class="card-body p-4">
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <label class="form-label text-muted small fw-bold">UoM Name</label>
+                            <input type="text" class="form-control" wire:model="uom_name">
+                            @error('uom_name') <span class="text-danger small">{{ $message }}</span> @enderror
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label text-muted small fw-bold">Category</label>
+                            <select class="form-select" wire:model="uom_category_id">
+                                <option value="">Select Category...</option>
                                 @foreach($categories as $cat)
                                     <option value="{{ $cat->id }}">{{ $cat->category_name }}</option>
                                 @endforeach
                             </select>
-                        </td>
-                        <td>
-                            <select wire:model="new_uom_type" class="inline-select">
-                                <option value="Reference">Reference</option>
-                                <option value="Bigger">Bigger than reference</option>
-                                <option value="Smaller">Smaller than reference</option>
+                            @error('uom_category_id') <span class="text-danger small">{{ $message }}</span> @enderror
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label text-muted small fw-bold">Type</label>
+                            <select class="form-select" wire:model="uom_type">
+                                <option value="Reference">Reference Unit of Measure for this category</option>
+                                <option value="Smaller">Smaller than the reference Unit of Measure</option>
+                                <option value="Bigger">Bigger than the reference Unit of Measure</option>
                             </select>
-                        </td>
-                        <td><input type="number" step="0.0001" wire:model="new_ratio" class="inline-input"></td>
-                        <td class="text-center">
-                            <div class="form-check form-switch d-inline-block">
-                                <input class="form-check-input" type="checkbox" wire:model="new_is_active">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label text-muted small fw-bold">Ratio</label>
+                            <input type="number" step="0.0001" class="form-control" wire:model="ratio">
+                            @error('ratio') <span class="text-danger small">{{ $message }}</span> @enderror
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-check form-switch mt-4">
+                                <input class="form-check-input" type="checkbox" wire:model="is_active" id="uomActive">
+                                <label class="form-check-label fw-bold" for="uomActive">Active</label>
                             </div>
-                        </td>
-                        <td class="text-end">
-                            <span wire:click="saveNew" wire:confirm="Are you sure you want to create this UoM?" class="action-text me-2">SAVE</span>
-                            <span wire:click="cancelNew" class="text-muted" style="cursor:pointer">DISCARD</span>
-                        </td>
-                    </tr>
-                    @endif
+                        </div>
+                    </div>
 
-                    @foreach($uoms as $uom)
-                        @if($editingId === $uom->id)
-                            <tr wire:key="edit-{{ $uom->id }}-{{ $iteration }}">
-                                <td><input type="checkbox" class="form-check-input"></td>
-                                <td><input type="text" wire:model="edit_uom_name" class="inline-input"></td>
-                                <td>
-                                    <select wire:model="edit_uom_category_id" class="inline-select">
-                                        <option value=""></option>
-                                        @foreach($categories as $cat)
-                                            <option value="{{ $cat->id }}">{{ $cat->category_name }}</option>
-                                        @endforeach
-                                    </select>
-                                </td>
-                                <td>
-                                    <select wire:model="edit_uom_type" class="inline-select">
-                                        <option value="Reference">Reference</option>
-                                        <option value="Bigger">Bigger than reference</option>
-                                        <option value="Smaller">Smaller than reference</option>
-                                    </select>
-                                </td>
-                                <td><input type="number" step="0.0001" wire:model="edit_ratio" class="inline-input"></td>
-                                <td class="text-center">
-                                    <div class="form-check form-switch d-inline-block">
-                                        <input class="form-check-input" type="checkbox" wire:model="edit_is_active">
-                                    </div>
-                                </td>
-                                <td class="text-end">
-                                    <span wire:click="saveEdit" wire:confirm="Are you sure you want to save these changes?" class="action-text me-2">SAVE</span>
-                                    <span wire:click="cancelEdit" class="text-muted" style="cursor:pointer">DISCARD</span>
-                                </td>
-                            </tr>
-                        @else
-                            <tr wire:key="view-{{ $uom->id }}-{{ $iteration }}">
-                                <td><input type="checkbox" class="form-check-input"></td>
-                                <td wire:click="edit('{{ $uom->id }}')" style="cursor:pointer">{{ $uom->uom_name }}</td>
-                                <td wire:click="edit('{{ $uom->id }}')" style="cursor:pointer">{{ $uom->category ? $uom->category->category_name : '' }}</td>
-                                <td wire:click="edit('{{ $uom->id }}')" style="cursor:pointer">{{ $uom->uom_type }}</td>
-                                <td wire:click="edit('{{ $uom->id }}')" style="cursor:pointer">{{ number_format($uom->ratio, 4) }}</td>
-                                <td wire:click="edit('{{ $uom->id }}')" class="text-center" style="cursor:pointer">
-                                    <div class="form-check form-switch d-inline-block pointer-events-none">
-                                        <input class="form-check-input" type="checkbox" disabled {{ $uom->is_active ? 'checked' : '' }}>
-                                    </div>
-                                </td>
-                                <td class="text-end">
-                                    <span wire:click="edit('{{ $uom->id }}')" class="action-text me-2">EDIT</span>
-                                    <span wire:click="delete('{{ $uom->id }}')" wire:confirm="Are you sure you want to delete this UoM?" class="text-danger" style="cursor:pointer"><i class="mdi mdi-delete"></i></span>
-                                </td>
-                            </tr>
-                        @endif
-                    @endforeach
+                    <div class="mt-4 pt-3 border-top d-flex gap-2">
+                        <button wire:click="save" wire:confirm="Are you sure you want to save this UoM?" class="btn btn-new">SAVE</button>
+                        <button wire:click="cancel" class="btn btn-light border">DISCARD</button>
+                    </div>
+                </div>
+            </div>
+        @else
+            <!-- List View (Detail Based on Category) -->
+            <div class="mb-3">
+                <button wire:click="createNew" class="btn btn-new border-0 shadow-none">NEW UOM</button>
+            </div>
 
-                    @if(count($uoms) === 0 && !$isCreating)
-                        <tr>
-                            <td colspan="7" class="text-center py-4 text-muted">No Units of Measure found.</td>
-                        </tr>
-                    @endif
-                </tbody>
-            </table>
-        </div>
+            @foreach($categories as $cat)
+                <div class="category-header shadow-sm rounded-top border">
+                    <div class="d-flex align-items-center">
+                        <i class="mdi mdi-package-variant-closed me-2 text-primary"></i>
+                        <h5 class="mb-0 fw-bold">{{ $cat->category_name }}</h5>
+                        <span class="ms-3 badge bg-light text-dark border fw-normal">Base: {{ $cat->base_uom_name }} ({{ $cat->base_uom }})</span>
+                    </div>
+                    <button wire:click="createNew('{{ $cat->id }}')" class="btn btn-sm btn-link action-text text-decoration-none fw-bold">
+                        <i class="mdi mdi-plus"></i> Add UoM
+                    </button>
+                </div>
+                <div class="table-responsive mb-5">
+                    <table class="table table-hover odoo-table border-start border-end border-bottom">
+                        <thead>
+                            <tr class="bg-white">
+                                <th>Unit of Measure</th>
+                                <th>Type</th>
+                                <th>Ratio</th>
+                                <th class="text-center" style="width: 100px;">Status</th>
+                                <th class="text-end" style="width: 150px;"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($cat->uoms as $uom)
+                                <tr wire:key="uom-{{ $uom->id }}-{{ $iteration }}">
+                                    <td class="fw-bold">{{ $uom->uom_name }}</td>
+                                    <td>
+                                        @if($uom->uom_type == 'Reference')
+                                            <span class="text-primary fw-bold">Reference</span>
+                                        @elseif($uom->uom_type == 'Smaller')
+                                            <span class="text-warning">Smaller</span>
+                                        @else
+                                            <span class="text-info">Bigger</span>
+                                        @endif
+                                    </td>
+                                    <td>
+                                        @if($uom->uom_type == 'Reference')
+                                            1.0000
+                                        @else
+                                            {{ number_format($uom->ratio, 4) }}
+                                        @endif
+                                    </td>
+                                    <td class="text-center">
+                                        <span class="badge {{ $uom->is_active ? 'bg-success' : 'bg-secondary' }} rounded-pill">
+                                            {{ $uom->is_active ? 'Active' : 'Inactive' }}
+                                        </span>
+                                    </td>
+                                    <td class="text-end">
+                                        <span wire:click="edit('{{ $uom->id }}')" class="action-text me-2">EDIT</span>
+                                        <span wire:click="delete('{{ $uom->id }}')" wire:confirm="Are you sure you want to delete this UoM?" class="text-danger" style="cursor:pointer"><i class="mdi mdi-delete"></i></span>
+                                    </td>
+                                </tr>
+                            @endforeach
+                            @if($cat->uoms->isEmpty())
+                                <tr>
+                                    <td colspan="5" class="text-center py-3 text-muted small italic">No units defined in this category.</td>
+                                </tr>
+                            @endif
+                        </tbody>
+                    </table>
+                </div>
+            @endforeach
+        @endif
     </div>
 </div>

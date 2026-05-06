@@ -6,14 +6,15 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class UomCategory extends Model
+class SupplierBankAccount extends Model
 {
     use HasUuids, SoftDeletes;
 
     protected $fillable = [
-        'category_name',
-        'base_uom_name',
-        'base_uom',
+        'supplier_id',
+        'bank',
+        'bank_account_name',
+        'bank_account_number',
         'is_active',
     ];
 
@@ -21,8 +22,5 @@ class UomCategory extends Model
         'is_active' => 'boolean',
     ];
 
-    public function uoms()
-    {
-        return $this->hasMany(Uom::class, 'uom_category_id');
-    }
+    public function supplier() { return $this->belongsTo(Supplier::class); }
 }

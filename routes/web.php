@@ -33,3 +33,6 @@ Route::get('/inventory/products', \App\Livewire\ProductManager::class)->name('in
 Route::get('/purchasing', function () {
     return view('purchasing.home');
 })->name('purchasing.home');
+
+Route::get('/purchasing/suppliers', \App\Livewire\SupplierManager::class)->name('purchasing.suppliers');
+Route::get('/purchasing/orders', \App\Livewire\PurchaseOrderManager::class)->name('purchasing.orders');

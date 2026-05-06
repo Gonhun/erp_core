@@ -138,24 +138,24 @@
 
                                 <div class="col-md-4">
                                     <label class="form-label text-muted small fw-bold">Unit of Measure</label>
-                                    <select class="form-select" wire:model="uom_id">
+                                    <select class="form-select" wire:model="uom_category_id">
                                         <option value=""></option>
                                         @foreach($uoms as $uom)
-                                            <option value="{{ $uom->id }}">{{ $uom->uom_name }}</option>
+                                            <option value="{{ $uom->id }}">{{ $uom->base_uom_name }}</option>
                                         @endforeach
                                     </select>
-                                    @error('uom_id') <span class="text-danger small">{{ $message }}</span> @enderror
+                                    @error('uom_category_id') <span class="text-danger small">{{ $message }}</span> @enderror
                                 </div>
 
                                 <div class="col-md-4">
                                     <label class="form-label text-muted small fw-bold">Purchase Unit of Measure</label>
-                                    <select class="form-select" wire:model="purchase_uom_id">
+                                    <select class="form-select" wire:model="purchase_uom_category_id">
                                         <option value=""></option>
                                         @foreach($uoms as $uom)
-                                            <option value="{{ $uom->id }}">{{ $uom->uom_name }}</option>
+                                            <option value="{{ $uom->id }}">{{ $uom->base_uom_name }}</option>
                                         @endforeach
                                     </select>
-                                    @error('purchase_uom_id') <span class="text-danger small">{{ $message }}</span> @enderror
+                                    @error('purchase_uom_category_id') <span class="text-danger small">{{ $message }}</span> @enderror
                                 </div>
 
                                 <div class="col-md-4"></div>
@@ -285,7 +285,7 @@
                                 <td wire:click="edit('{{ $p->id }}')" style="cursor:pointer">{{ $p->product_name }}</td>
                                 <td wire:click="edit('{{ $p->id }}')" style="cursor:pointer">{{ $p->productType ? $p->productType->product_type_name : '' }}</td>
                                 <td wire:click="edit('{{ $p->id }}')" style="cursor:pointer">{{ $p->itemCategory ? $p->itemCategory->category_name : '' }}</td>
-                                <td wire:click="edit('{{ $p->id }}')" style="cursor:pointer">{{ $p->uom ? $p->uom->uom_name : '' }}</td>
+                                <td wire:click="edit('{{ $p->id }}')" style="cursor:pointer">{{ $p->uomCategory ? $p->uomCategory->base_uom : '' }}</td>
                                 <td class="text-end">
                                     <span wire:click="edit('{{ $p->id }}')" class="action-text me-2">EDIT</span>
                                     <span wire:click="delete('{{ $p->id }}')" wire:confirm="Are you sure you want to delete this product?" class="text-danger" style="cursor:pointer"><i class="mdi mdi-delete"></i></span>

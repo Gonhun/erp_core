@@ -6,7 +6,7 @@ use Livewire\Component;
 use App\Models\Product;
 use App\Models\ProductType;
 use App\Models\Brand;
-use App\Models\Uom;
+use App\Models\UomCategory;
 use App\Models\ItemCategory;
 use App\Models\SubItemCategory;
 use App\Models\ProductSubstitute;
@@ -19,14 +19,14 @@ class ProductManager extends Component
     public $editingId = null;
     public $activeTab = 'general'; // general, substitutes
 
-    // Fields
+    // Product Fields
     public $product_code = '';
     public $product_name = '';
     public $product_type_id = '';
     public $invoicing_policy = 'Ordered';
     public $brand_id = '';
-    public $uom_id = '';
-    public $purchase_uom_id = '';
+    public $uom_category_id = '';
+    public $purchase_uom_category_id = '';
     public $item_category_id = '';
     public $sub_item_id = '';
     public $part_number = '';
@@ -34,16 +34,16 @@ class ProductManager extends Component
     public $is_active = true;
 
     // Substitutes
-    public $substitutes = []; // Array of ['substitute_product_id' => '', 'priority' => 0]
+    public $substitutes = [];
 
     public function render()
     {
-        $products = Product::with(['productType', 'brand', 'uom', 'itemCategory'])->orderBy('product_code')->get();
+        $products = Product::with(['productType', 'brand', 'uomCategory', 'itemCategory'])->orderBy('product_code')->get();
         $types = ProductType::where('is_active', true)->orderBy('product_type_name')->get();
         $brands = Brand::where('is_active', true)->orderBy('brand_name')->get();
-        $uoms = Uom::where('is_active', true)->orderBy('uom_name')->get();
+        $uoms = UomCategory::where('is_active', true)->orderBy('base_uom')->get();
         $categories = ItemCategory::where('is_active', true)->orderBy('category_name')->get();
-        
+
         $subCategories = [];
         if ($this->item_category_id) {
             $subCategories = SubItemCategory::where('item_category_id', $this->item_category_id)->where('is_active', true)->orderBy('sub_category_name')->get();
@@ -76,18 +76,8 @@ class ProductManager extends Component
         $this->isCreating = true;
         $this->editingId = null;
         $this->resetFields();
-        $this->product_code = $this->generateProductCode();
         $this->activeTab = 'general';
         $this->iteration++;
-    }
-
-    private function generateProductCode()
-    {
-        $last = Product::where('product_code', 'like', 'PRD-%')->orderBy('product_code', 'desc')->first();
-        if (!$last) return 'PRD-001';
-        
-        $num = (int) str_replace('PRD-', '', $last->product_code);
-        return 'PRD-' . str_pad($num + 1, 3, '0', STR_PAD_LEFT);
     }
 
     private function resetFields()
@@ -97,22 +87,14 @@ class ProductManager extends Component
         $this->product_type_id = '';
         $this->invoicing_policy = 'Ordered';
         $this->brand_id = '';
-        $this->uom_id = '';
-        $this->purchase_uom_id = '';
+        $this->uom_category_id = '';
+        $this->purchase_uom_category_id = '';
         $this->item_category_id = '';
         $this->sub_item_id = '';
         $this->part_number = '';
         $this->product_notes = '';
         $this->is_active = true;
         $this->substitutes = [];
-    }
-
-    public function cancel()
-    {
-        $this->isCreating = false;
-        $this->editingId = null;
-        $this->resetFields();
-        $this->iteration++;
     }
 
     public function addSubstituteRow()
@@ -136,8 +118,8 @@ class ProductManager extends Component
             'product_code' => 'required|string|unique:products,product_code,' . ($this->editingId ?: 'NULL') . ',id',
             'product_name' => 'required|string|max:255',
             'product_type_id' => 'required|exists:product_types,id',
-            'uom_id' => 'required|exists:uoms,id',
-            'purchase_uom_id' => 'required|exists:uoms,id',
+            'uom_category_id' => 'required|exists:uom_categories,id',
+            'purchase_uom_category_id' => 'required|exists:uom_categories,id',
             'item_category_id' => 'required|exists:item_categories,id',
             'substitutes.*.substitute_product_id' => 'required|exists:products,id',
         ];
@@ -151,13 +133,13 @@ class ProductManager extends Component
                 'product_type_id' => $this->product_type_id,
                 'invoicing_policy' => $this->invoicing_policy,
                 'brand_id' => $this->brand_id ?: null,
-                'uom_id' => $this->uom_id,
-                'purchase_uom_id' => $this->purchase_uom_id,
+                'uom_category_id' => $this->uom_category_id,
+                'purchase_uom_category_id' => $this->purchase_uom_category_id,
                 'item_category_id' => $this->item_category_id,
                 'sub_item_id' => $this->sub_item_id ?: null,
                 'part_number' => $this->part_number,
                 'product_notes' => $this->product_notes,
-                'is_active' => (bool)$this->is_active,
+                'is_active' => (bool) $this->is_active,
             ];
 
             if ($this->editingId) {
@@ -195,8 +177,8 @@ class ProductManager extends Component
         $this->product_type_id = $p->product_type_id;
         $this->invoicing_policy = $p->invoicing_policy;
         $this->brand_id = $p->brand_id;
-        $this->uom_id = $p->uom_id;
-        $this->purchase_uom_id = $p->purchase_uom_id;
+        $this->uom_category_id = $p->uom_category_id;
+        $this->purchase_uom_category_id = $p->purchase_uom_category_id;
         $this->item_category_id = $p->item_category_id;
         $this->sub_item_id = $p->sub_item_id;
         $this->part_number = $p->part_number;
@@ -210,6 +192,14 @@ class ProductManager extends Component
         ])->toArray();
 
         $this->activeTab = 'general';
+        $this->iteration++;
+    }
+
+    public function cancel()
+    {
+        $this->isCreating = false;
+        $this->editingId = null;
+        $this->resetFields();
         $this->iteration++;
     }
 
