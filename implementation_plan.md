@@ -27,3 +27,7 @@ A complex form to handle the header and dynamic item lines.
 ## Phase 5: Inventory Reception Preparation
 - **PO-to-Receipt Link**: Plan for the transition from a "Confirmed" PO to a "Ready" Goods Receipt.
 - **Backorder Support**: Logic for partial shipments.
+
+## Phase 6: Data Migration & Utilities
+- **Excel Account Import**: Bulk upload accounts using `maatwebsite/excel`. Handles group account resolution.
+- **Data Validation**: Pre-import validation for account codes and duplicates.

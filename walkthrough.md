@@ -24,3 +24,13 @@ Once the vendor confirms availability and price:
 
 ## 4. Dashboard Integration
 The **Purchasing Dashboard** provides quick access to your Vendors and active Purchase Orders, showing real-time totals and statuses.
+
+
+# Walkthrough: Data Utilities
+
+## Excel Account Import
+To bulk-load your Chart of Accounts:
+1. Navigate to **Accounting > Accounts**.
+2. Click the **IMPORT** button at the top.
+3. Upload your Excel file. Ensure your headers match: `account_code`, `account_name`, `group_account`, `balance_type`, `currency`, and `is_reconciliation`.
+4. Click **PROCESS IMPORT** to finalize.

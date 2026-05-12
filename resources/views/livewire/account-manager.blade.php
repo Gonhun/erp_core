@@ -28,6 +28,17 @@
             background-color: #006e6b;
             color: white;
         }
+        .btn-outline-odoo {
+            border: 1px solid #008784;
+            color: #008784;
+            border-radius: 2px;
+            font-weight: bold;
+            padding: 6px 16px;
+        }
+        .btn-outline-odoo:hover {
+            background-color: #008784;
+            color: white;
+        }
         .action-text {
             color: #008784;
             font-weight: 600;
@@ -47,12 +58,34 @@
         .form-switch .form-check-input {
             cursor: pointer;
         }
+        .import-section {
+            background-color: #f8f9fa;
+            border: 1px dashed #008784;
+            border-radius: 4px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
     </style>
     
     <div class="container-fluid py-3 bg-white">
+        @if (session()->has('message'))
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                {{ session('message') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        @endif
+
+        @if (session()->has('error'))
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                {{ session('error') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        @endif
+
         <div class="d-flex justify-content-between align-items-center mb-3">
             <div>
                 <button wire:click="createNew" class="btn btn-new border-0 shadow-none me-2">NEW</button>
+                <button wire:click="toggleImport" class="btn btn-outline-odoo border shadow-none">IMPORT</button>
             </div>
             <div class="text-muted small d-flex align-items-center">
                 <span class="me-3"><i class="mdi mdi-filter-variant"></i> Filters</span>
@@ -65,6 +98,24 @@
                 <i class="mdi mdi-chevron-right fs-5"></i>
             </div>
         </div>
+
+        @if($showImport)
+            <div class="import-section" wire:key="import-section-{{ $iteration }}">
+                <h5 class="mb-3">Import Accounts from Excel</h5>
+                <p class="text-muted small mb-3">Please upload an Excel/CSV file with the following headers: <b>account_code, account_name, group_account, balance_type, currency, allow_reconciliation</b>.</p>
+                <div class="d-flex align-items-center gap-3">
+                    <input type="file" wire:model="excelFile" class="form-control shadow-none border-0 bg-white" style="max-width: 400px;">
+                    <div wire:loading wire:target="excelFile" class="text-muted small">
+                        <div class="spinner-border spinner-border-sm text-primary" role="status"></div> Uploading...
+                    </div>
+                    @if($excelFile)
+                        <button wire:click="importExcel" class="btn btn-new">PROCESS IMPORT</button>
+                    @endif
+                    <button wire:click="toggleImport" class="btn btn-light border">CANCEL</button>
+                </div>
+                @error('excelFile') <span class="text-danger small d-block mt-2">{{ $message }}</span> @enderror
+            </div>
+        @endif
 
         <div class="table-responsive">
             <table class="table table-hover odoo-table mb-0">
@@ -82,7 +133,6 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <!-- Inline Create Row -->
                     @if($isCreating)
                     <tr class="table-info" wire:key="create-row-{{ $iteration }}">
                         <td></td>
@@ -132,12 +182,10 @@
                     </tr>
                     @endif
 
-                    <!-- Data Rows -->
                     @foreach($accounts as $account)
                         @if($editingId === $account->id)
                             <tr wire:key="edit-{{ $account->id }}-{{ $iteration }}">
                                 <td><input type="checkbox" class="form-check-input"></td>
-                                <!-- Inline Edit Row -->
                                 <td><input type="text" wire:model="edit_account_code" class="inline-input"></td>
                                 <td><input type="text" wire:model="edit_account_name" class="inline-input"></td>
                                 <td>
@@ -180,7 +228,6 @@
                         @else
                             <tr wire:key="view-{{ $account->id }}-{{ $iteration }}">
                                 <td><input type="checkbox" class="form-check-input"></td>
-                                <!-- Normal Row -->
                                 <td wire:click="edit('{{ $account->id }}')" style="cursor:pointer">{{ $account->account_code }}</td>
                                 <td wire:click="edit('{{ $account->id }}')" style="cursor:pointer">{{ $account->account_name }}</td>
                                 <td wire:click="edit('{{ $account->id }}')" style="cursor:pointer">{{ $account->groupAccount ? $account->groupAccount->group_accounts_name : '' }}</td>

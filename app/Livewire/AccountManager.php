@@ -5,13 +5,22 @@ namespace App\Livewire;
 use Livewire\Component;
 use App\Models\Account;
 use App\Models\GroupAccount;
+use Livewire\WithFileUploads;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Imports\AccountsImport;
 
 class AccountManager extends Component
 {
+    use WithFileUploads;
+
     public $accounts;
     public $groupAccounts;
     public $currencies = [];
     public $iteration = 0;
+
+    // Excel Import
+    public $excelFile;
+    public $showImport = false;
 
     // Inline Create State
     public $isCreating = false;
@@ -40,7 +49,6 @@ class AccountManager extends Component
         try {
             $this->currencies = \AshAllenDesign\LaravelExchangeRates\Facades\ExchangeRate::currencies();
         } catch (\Throwable $th) {
-            // Fallback if ExchangeRate API key is missing or network fails
             $this->currencies = ['USD', 'EUR', 'GBP', 'IDR', 'CNY', 'JPY', 'AUD', 'CAD', 'CHF', 'HKD', 'SGD'];
         }
     }
@@ -49,6 +57,30 @@ class AccountManager extends Component
     {
         $this->accounts = Account::with('groupAccount')->orderBy('account_code', 'asc')->get();
         return view('livewire.account-manager')->layout('layouts.app');
+    }
+
+    public function toggleImport()
+    {
+        $this->showImport = !$this->showImport;
+        $this->excelFile = null;
+        $this->iteration++;
+    }
+
+    public function importExcel()
+    {
+        $this->validate([
+            'excelFile' => 'required|mimes:xlsx,xls,csv|max:10240',
+        ]);
+
+        try {
+            Excel::import(new AccountsImport, $this->excelFile);
+            $this->showImport = false;
+            $this->excelFile = null;
+            $this->iteration++;
+            session()->flash('message', 'Accounts imported successfully!');
+        } catch (\Exception $e) {
+            session()->flash('error', 'Error during import: ' . $e->getMessage());
+        }
     }
 
     public function createNew()
