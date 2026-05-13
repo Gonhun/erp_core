@@ -27,14 +27,22 @@
                 <div class="odoo-status-bar">
                     <div class="d-flex gap-2">
                         @if($status == 'draft')
-                            <button wire:click="save" class="btn btn-sm btn-new">SAVE</button>
-                            <button wire:click="confirmRfq" class="btn btn-sm btn-outline-primary">CONFIRM RFQ</button>
+                            <button wire:click="save" class="btn btn-sm btn-new px-3 shadow-sm">SAVE</button>
+                            <button wire:click="confirmRfq" class="btn btn-sm btn-primary px-3 shadow-sm"><i class="mdi mdi-email-outline"></i> CONFIRM RFQ</button>
                         @elseif($status == 'sent')
-                            <button wire:click="confirmOrder" class="btn btn-sm btn-new">CONFIRM ORDER</button>
+                            <button wire:click="confirmOrder" class="btn btn-sm btn-success px-3 shadow-sm"><i class="mdi mdi-check-circle-outline"></i> CONFIRM ORDER</button>
                         @endif
-                        <button wire:click="cancel" class="btn btn-sm btn-light border">DISCARD</button>
+                        
+                        @if($editingId)
+                            <button wire:click="exportPdf('{{ $editingId }}')" class="btn btn-sm btn-outline-danger px-3"><i class="mdi mdi-file-pdf-box"></i> PRINT PDF</button>
+                        @endif
+
+                        <div class="vr mx-2"></div>
+
+                        <button wire:click="cancel" class="btn btn-sm btn-light border px-3">DISCARD</button>
+                        
                         @if($status != 'cancel' && $status != 'done')
-                            <button wire:click="cancelOrder" wire:confirm="Cancel this order?" class="btn btn-sm btn-outline-danger">CANCEL</button>
+                            <button wire:click="cancelOrder" wire:confirm="Cancel this order?" class="btn btn-sm btn-link text-danger text-decoration-none">CANCEL ORDER</button>
                         @endif
                     </div>
                     <div class="odoo-breadcrumb d-none d-md-flex">
@@ -218,7 +226,14 @@
                                         </span>
                                     </td>
                                     <td class="text-end">
-                                        <span wire:click="edit('{{ $o->id }}')" class="action-text">VIEW</span>
+                                        <div class="d-flex justify-content-end align-items-center gap-2">
+                                            <button wire:click="exportPdf('{{ $o->id }}')" class="btn btn-sm btn-outline-danger border-0 p-1" title="Download PDF Document">
+                                                <i class="mdi mdi-file-pdf-box fs-4"></i>
+                                            </button>
+                                            <button wire:click="edit('{{ $o->id }}')" class="btn btn-sm btn-outline-primary border-0 fw-bold px-2">
+                                                VIEW
+                                            </button>
+                                        </div>
                                     </td>
                                 </tr>
                             @endforeach

@@ -11,6 +11,7 @@ use App\Models\UomCategory;
 use App\Models\Tax;
 use App\Models\Warehouse;
 use Illuminate\Support\Facades\DB;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class PurchaseOrderManager extends Component
 {
@@ -317,6 +318,17 @@ class PurchaseOrderManager extends Component
         $order->update(['status' => 'cancel']);
         $this->status = 'cancel';
         $this->iteration++;
+    }
+
+    public function exportPdf($id)
+    {
+        $order = PurchaseOrder::with(['supplier', 'warehouse', 'items.product'])->findOrFail($id);
+        
+        $pdf = Pdf::loadView('purchasing.pdf', ['order' => $order]);
+        
+        return response()->streamDownload(function () use ($pdf) {
+            echo $pdf->output();
+        }, $order->po_number . '.pdf');
     }
 
     public function cancel()
