@@ -95,6 +95,24 @@
                     </div>
                 </a>
             </div>
+            <div class="col-md-4 col-lg-3">
+                <a href="{{ route('inventory.receipts') }}" class="menu-card">
+                    <div class="menu-icon"><i class="mdi mdi-truck-check"></i></div>
+                    <div class="menu-content">
+                        <div class="menu-title">Receipts</div>
+                        <div class="menu-desc">Incoming stock & backorders</div>
+                    </div>
+                </a>
+            </div>
+            <div class="col-md-4 col-lg-3">
+                <a href="{{ route('inventory.moves') }}" class="menu-card">
+                    <div class="menu-icon"><i class="mdi mdi-history"></i></div>
+                    <div class="menu-content">
+                        <div class="menu-title">Stock Moves</div>
+                        <div class="menu-desc">Audit log of all movements</div>
+                    </div>
+                </a>
+            </div>
         </div>
     </div>
 

@@ -10,6 +10,8 @@ use App\Models\Product;
 use App\Models\UomCategory;
 use App\Models\Tax;
 use App\Models\Warehouse;
+use App\Models\GoodsReceipt;
+use App\Models\GoodsReceiptItem;
 use Illuminate\Support\Facades\DB;
 use Barryvdh\DomPDF\Facade\Pdf;
 
@@ -305,10 +307,41 @@ class PurchaseOrderManager extends Component
     public function confirmOrder()
     {
         if (!$this->editingId) return;
-        $order = PurchaseOrder::findOrFail($this->editingId);
-        $order->update(['status' => 'purchase']);
-        $this->status = 'purchase';
+
+        DB::transaction(function () {
+            $order = PurchaseOrder::with('items')->findOrFail($this->editingId);
+            $order->update(['status' => 'purchase']);
+            $this->status = 'purchase';
+
+            // Create Goods Receipt
+            $prefix = 'GR-' . date('Ym') . '-';
+            $lastGR = GoodsReceipt::where('gr_number', 'like', $prefix . '%')->orderBy('gr_number', 'desc')->first();
+            $lastNum = $lastGR ? intval(substr($lastGR->gr_number, -4)) : 0;
+            $grNumber = $prefix . str_pad($lastNum + 1, 4, '0', STR_PAD_LEFT);
+
+            $receipt = GoodsReceipt::create([
+                'gr_number' => $grNumber,
+                'purchase_order_id' => $order->id,
+                'supplier_id' => $order->supplier_id,
+                'warehouse_id' => $order->warehouse_id,
+                'currency' => $order->currency,
+                'status' => 'ready', // Immediately ready for warehouse
+                'invoice_control' => 'no',
+            ]);
+
+            foreach ($order->items as $item) {
+                GoodsReceiptItem::create([
+                    'goods_receipt_id' => $receipt->id,
+                    'purchase_order_item_id' => $item->id,
+                    'product_id' => $item->product_id,
+                    'qty_ordered' => $item->quantity,
+                    'qty_received' => 0,
+                ]);
+            }
+        });
+
         $this->iteration++;
+        session()->flash('message', 'Order confirmed and Inventory Receipt generated.');
     }
 
     public function cancelOrder()

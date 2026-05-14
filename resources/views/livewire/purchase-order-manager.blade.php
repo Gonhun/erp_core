@@ -27,10 +27,10 @@
                 <div class="odoo-status-bar">
                     <div class="d-flex gap-2">
                         @if($status == 'draft')
-                            <button wire:click="save" class="btn btn-sm btn-new px-3 shadow-sm">SAVE</button>
-                            <button wire:click="confirmRfq" class="btn btn-sm btn-primary px-3 shadow-sm"><i class="mdi mdi-email-outline"></i> CONFIRM RFQ</button>
+                            <button wire:click="save" wire:confirm="Save this quotation?" class="btn btn-sm btn-new px-3 shadow-sm">SAVE</button>
+                            <button wire:click="confirmRfq" wire:confirm="Confirm this RFQ and mark as sent?" class="btn btn-sm btn-primary px-3 shadow-sm"><i class="mdi mdi-email-outline"></i> CONFIRM RFQ</button>
                         @elseif($status == 'sent')
-                            <button wire:click="confirmOrder" class="btn btn-sm btn-success px-3 shadow-sm"><i class="mdi mdi-check-circle-outline"></i> CONFIRM ORDER</button>
+                            <button wire:click="confirmOrder" wire:confirm="Confirm this order and generate Inventory Receipt?" class="btn btn-sm btn-success px-3 shadow-sm"><i class="mdi mdi-check-circle-outline"></i> CONFIRM ORDER</button>
                         @endif
                         
                         @if($editingId)

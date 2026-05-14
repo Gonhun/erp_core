@@ -29,6 +29,8 @@ Route::get('/inventory/item-categories', \App\Livewire\ItemCategoryManager::clas
 Route::get('/inventory/product-types', \App\Livewire\ProductTypeManager::class)->name('inventory.product-types');
 Route::get('/inventory/uoms', \App\Livewire\UomManager::class)->name('inventory.uoms');
 Route::get('/inventory/products', \App\Livewire\ProductManager::class)->name('inventory.products');
+Route::get('/inventory/receipts', \App\Livewire\GoodsReceiptManager::class)->name('inventory.receipts');
+Route::get('/inventory/moves', \App\Livewire\StockMoveManager::class)->name('inventory.moves');
 
 Route::get('/purchasing', function () {
     return view('purchasing.home');
