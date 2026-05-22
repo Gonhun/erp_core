@@ -42,3 +42,14 @@ Your system is designed for high-density professional work.
 
 ## 6. Real-time Balances
 At any time, you can verify your physical stock levels in the system. The **Inventory Ledger** and **Product Stock** tables ensure that your digital records perfectly match your physical reality.
+
+---
+
+## 7. The Invoicing & Payment Cycle (Finance & AP)
+Once goods have arrived at your warehouse, it is time to match receipts to bills and complete the financial cycle.
+- **Step 1: Match PO to Bill**: Navigate to **Finance > Vendor Bills** and click **NEW BILL**. Select the supplier and optionally select the confirmed Purchase Order to automatically import all PO lines, pricing, discounts, UoMs, and taxes!
+- **Step 2: Automated invoice details**: The unique sequential bill document number (e.g. `BILL/2026/V/00001` with Roman month numerals) is automatically assigned. The vendor bill number also pre-fills automatically.
+- **Step 3: Journal preview**: Before validation, toggle to the **Journal Items** tab. You can instantly preview the exact balancing general ledger entries (Expense Debits, AP Credits, Tax Inputs) that will be generated!
+- **Step 4: Save & Post**: Click **SAVE** (confirm with `wire:confirm`) and then **POST JOURNAL** to permanently record the balanced entries into the double-entry accounting ledger.
+- **Step 5: Register Payment**: Navigate to **Finance > Vendor Payments** and click **REGISTER PAYMENT**. Select the vendor, input the payment amount (e.g. cash or bank), and use the high-density allocation panel to match and settle outstanding vendor bills. 
+- **Result**: The fully allocated vendor bills transition automatically to **`paid`** status, completing the purchasing and invoicing workflow!

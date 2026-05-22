@@ -114,4 +114,31 @@
             </div>
         </div>
     </div>
+    <div class="mb-4">
+        <h4 class="text-sm font-bold text-gray-500 uppercase tracking-wider mb-3">Vendor Billing & Payments (AP)</h4>
+        <div class="row g-3">
+            <div class="col-md-4 col-lg-3">
+                <a href="{{ route('finance.bills') }}" class="menu-card">
+                    <div class="menu-icon">
+                        <i class="mdi mdi-receipt-text-check-outline"></i>
+                    </div>
+                    <div class="menu-content">
+                        <div class="menu-title">Vendor Bills</div>
+                        <div class="menu-desc">Match POs, receipts & bills</div>
+                    </div>
+                </a>
+            </div>
+            <div class="col-md-4 col-lg-3">
+                <a href="{{ route('finance.payments') }}" class="menu-card">
+                    <div class="menu-icon">
+                        <i class="mdi mdi-cash-register"></i>
+                    </div>
+                    <div class="menu-content">
+                        <div class="menu-title">Vendor Payments</div>
+                        <div class="menu-desc">Register bank & cash payouts</div>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
 @endsection

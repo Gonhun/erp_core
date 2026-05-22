@@ -9,7 +9,7 @@
     ],
     "license": "MIT",
     "require": {
-        "php": "^8.4",
+        "php": "^8.5",
         "laravel/framework": "^13.0",
         "laravel/tinker": "^3.0",
         "ashallendesign/laravel-exchange-rates": "^7.10",
@@ -18,8 +18,7 @@
         "intervention/image-laravel": "^1.5",
         "laravel/ui": "^4.6",
         "livewire/livewire": "^4.1",
-        "maatwebsite/excel": "^3.1",
-        "phpoffice/phpspreadsheet": "^1.29",
+        "phpoffice/phpspreadsheet": "^3.10.5",
         "monarobase/country-list": "^3.6",
         "webklex/php-imap": "^6.2",
         "webklex/laravel-imap": "^6.2"

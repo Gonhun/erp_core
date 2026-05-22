@@ -58,7 +58,25 @@ This document serves as the comprehensive technical record of all architectural 
 
 ---
 
-## 6. System-Wide Features (Completed)
+## 6. Phase 6: Finance & Vendor Bills (Completed)
+- **Billing & AP**:
+    - [x] **`vendor_bills`**: Header tracking bill number, PO reference, invoice date, due date, status (`draft`, `posted`, `paid`, `cancel`), and totals.
+    - [x] **`vendor_bill_items`**: Line items mapping products to quantities, prices, taxes, discounts, and GL accounts.
+    - [x] **Roman Month Number Sequence**: Pre-generated sequential document numbers (`BILL/{Year}/{RomanMonth}/{5-digit Sequence}`) reactively updated on date change.
+    - [x] **Double-Entry Journal Generation**: Automatically creates posted Journal Entries and dual-balanced Journal Items upon bill validation.
+- **Double-Entry General Ledger**:
+    - [x] **`journal_entries`**: Ledger transaction records.
+    - [x] **`journal_items`**: Dual-balanced journal ledger lines enforcing Total Debits = Total Credits.
+- **Payments & Settlements**:
+    - [x] **`payments`**: Cash out tracking bank/cash accounts and amounts.
+    - [x] **`payment_allocations`**: Multi-bill payment allocations mapping cash payouts to settle vendor bills.
+- **Odoo Tabbed Interface**:
+    - [x] **Invoice Lines vs. Journal Items**: Compact toggle interface displaying product inputs alongside live general ledger preview.
+
+---
+
+## 7. System-Wide Features (Completed)
 - [x] **UI/UX Launcher**: Redesigned homepages for Finance, Inventory, and Purchasing using compact icon-based grids.
 - [x] **Safety Interlocks**: Implementation of `wire:confirm` across all CRUD and Status-change actions.
 - [x] **Polymorphic Search**: Searchable Select2 integrations for all relational fields.
+- [x] **Enterprise-Grade Try-Catch Handling**: Every create, update, and delete action in our Livewire controllers is fully protected inside `try-catch` blocks with custom session flash error messaging to prevent raw system exposure and ensure maximum application stability.

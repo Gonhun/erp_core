@@ -15,6 +15,8 @@ Route::get('/finance/accounts', \App\Livewire\AccountManager::class)->name('fina
 Route::get('/finance/taxes', \App\Livewire\TaxManager::class)->name('finance.taxes');
 Route::get('/finance/taxes/{tax}/setup', \App\Livewire\TaxSetupManager::class)->name('finance.taxes.setup');
 Route::get('/finance/customers', \App\Livewire\CustomerManager::class)->name('finance.customers');
+Route::get('/finance/bills', \App\Livewire\VendorBillManager::class)->name('finance.bills');
+Route::get('/finance/payments', \App\Livewire\PaymentManager::class)->name('finance.payments');
 
 Route::get('/inventory', function () {
     return view('inventory.home');
